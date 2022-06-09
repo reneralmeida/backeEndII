@@ -1,5 +1,7 @@
 package com.movie.catalog.service;
 
+import java.util.List;
+
 public interface CatalogService {
-    String getMovie (String genre);
+    List<?> getMovie (String genre);
 }
