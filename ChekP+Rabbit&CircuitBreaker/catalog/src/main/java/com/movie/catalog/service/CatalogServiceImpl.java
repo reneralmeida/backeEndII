@@ -35,5 +35,4 @@ public class CatalogServiceImpl implements CatalogService {
     public Movie saveMovieFallbackValue(CallNotPermittedException ex) throws CircuitBreakerException {
         throw new CircuitBreakerException("Activating circuit breaker");
     }
-
 }
