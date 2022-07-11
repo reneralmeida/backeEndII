@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: eureka-service
+  zipkin:
+    base-url: http://zipkin-service:9411/
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    wait-time-in-ms-when-sync-empty: 6000
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+info:
+  name: Eureka Server
+  author: Rener Almeida
+  severity: Alto

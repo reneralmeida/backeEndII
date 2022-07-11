@@ -1,0 +1,52 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: serie-service
+  zipkin:
+    base-url: http://zipkin-service:9411/
+  config:
+    import: optional:configserver:http://config-server:8888
+  cloud:
+    config:
+      profile: dev
+  servlet:
+    context-path: /serie/
+  data:
+    mongodb:
+      uri: mongodb://root:password@mongo_serie:27016/example?authSource=admin
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka/
+
+rabbitmq:
+  username: guest
+  password: guest
+  host: rabbitmq
+  port: 5672
+
+queue:
+  serie:
+    name: serieQueue
+
+message: Serie up
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+info:
+  name: Micro serviço de séries
+  author: Rener Almeida
+  severity: Alto

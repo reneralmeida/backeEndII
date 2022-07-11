@@ -1,0 +1,78 @@
+server:
+  port: 8080
+  config:
+    import: optional:configserver:http://config-service:8888
+
+spring:
+  application:
+    name: api-gateway
+  zipkin:
+    base-url: http://zipkin-service:9411/
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: movieRoute
+          uri: lb://MOVIE-SERVICE:8081
+          predicates:
+            - Path=/movie/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: movieService
+                fallbackUri: forward:/fallback/movie
+        - id: catalogRoute
+          uri: lb://CATALOG-SERVICE:8082
+          predicates:
+            - Path=/catalog/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: catalogService
+                fallbackUri: forward:/fallback/catalog
+        - id: serieRoute
+          uri: lb://SERIE-SERVICE:8083
+          predicates:
+            - Path=/serie/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: serieService
+                fallbackUri: forward:/fallback/serie
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      recordExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - java.io.IOException
+  instances:
+    api-gateway:
+      baseConfig: default
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka/
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+info:
+  name: Portão de entrada dos demais serviços e roteamento fallback
+  author: Rener Almeida
+  severity: Alto
