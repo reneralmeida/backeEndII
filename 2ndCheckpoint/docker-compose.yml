@@ -75,6 +75,16 @@ services:
     ports:
       - "8888:8888"
 
+  api-gateway:
+    build: api-gateway
+    container_name: api-gateway
+    restart: always
+    depends_on:
+      - eureka-service
+      - config-server
+    ports:
+      - "8080:8080"
+
   movie-service:
     build: movie-service
     container_name: movie-service
@@ -85,6 +95,8 @@ services:
       - spring_rabbitmq_username=guest
       - spring_rabbitmq_password=guest
     depends_on:
+      - eureka-service
+      - api-gateway
       - config-server
 #      - movie_db
       - rabbitmq
@@ -101,6 +113,8 @@ services:
       - spring_rabbitmq_username=guest
       - spring_rabbitmq_password=guest
     depends_on:
+      - eureka-service
+      - api-gateway
       - config-server
       - serie_mongo
       - rabbitmq
@@ -112,18 +126,11 @@ services:
     container_name: catalog-service
     restart: always
     depends_on:
+      - eureka-service
       - config-server
+      - api-gateway
       - catalog_mongo
       - serie-service
       - movie-service
     ports:
       - "8082:8082"
-
-  api-gateway:
-    build: api-gateway 
-    container_name: api-gateway
-    restart: always
-    depends_on:
-      - catalog-service
-    ports:
-      - "8080:8080"
